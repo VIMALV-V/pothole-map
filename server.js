@@ -18,11 +18,14 @@ mongoose.connect(
   .catch(err => console.error("❌ MongoDB connection error:", err));
 
 // Hazard schema & model
+// Hazard schema & model (point to pothole.data collection)
 const hazardSchema = new mongoose.Schema({
   lat: Number,
   lon: Number,
   count: { type: Number, default: 0 }
-});
+}, { collection: "data" });  // 👈 force mongoose to use "data" collection
+
+
 
 const Hazard = mongoose.model("Hazard", hazardSchema);
 
