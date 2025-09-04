@@ -1,0 +1,17 @@
+{
+  "name": "map",
+  "version": "1.0.0",
+  "description": "Pothole map with Node.js, Express, MongoDB, and Leaflet",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": ["pothole", "map", "leaflet", "express", "mongodb"],
+  "author": "Your Team Name",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^8.3.1"
+  }
+}
+
