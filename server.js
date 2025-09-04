@@ -10,24 +10,31 @@ app.use(express.static("public"));
 
 // Connect to MongoDB Atlas
 mongoose.connect(
-  
-  "mongodb+srv://vimal:vimalmongodb@cluster0.towcoag.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
+  "mongodb+srv://vimal:vimalmongodb@cluster0.towcoag.mongodb.net/pothole?retryWrites=true&w=majority&appName=Cluster0",
   { useNewUrlParser: true, useUnifiedTopology: true }
 )
   .then(() => console.log("✅ Connected to MongoDB Atlas"))
   .catch(err => console.error("❌ MongoDB connection error:", err));
 
-// Hazard schema & model
-// Hazard schema & model (point to pothole.data collection)
+// Hazard schema & model (force to use pothole.data collection)
 const hazardSchema = new mongoose.Schema({
   lat: Number,
   lon: Number,
   count: { type: Number, default: 0 }
-}, { collection: "data" });  // 👈 force mongoose to use "data" collection
+});
 
+// 👇 explicitly point to "data" collection inside "pothole" DB
+const Hazard = mongoose.model("Hazard", hazardSchema, "data");
 
-
-const Hazard = mongoose.model("Hazard", hazardSchema);
+// Debug route to check if DB works
+app.get("/api/debug", async (req, res) => {
+  try {
+    const count = await Hazard.countDocuments();
+    res.json({ count });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // API: Get confirmed potholes (count >= 3)
 app.get("/api/potholes", async (req, res) => {
