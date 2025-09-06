@@ -1,19 +1,12 @@
 {
   "name": "pothole-map",
   "version": "1.0.0",
-  "description": "Crowdsourced pothole detection map",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
     "express": "^4.18.2",
-    "mongoose": "^7.6.0",
-    "path": "^0.12.7"
-  },
-  "engines": {
-    "node": ">=18.x"
-  },
-  "author": "",
-  "license": "MIT"
+    "mongoose": "^7.6.1"
+  }
 }
