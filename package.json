@@ -1,17 +1,19 @@
 {
-  "name": "map",
+  "name": "pothole-map",
   "version": "1.0.0",
-  "description": "Pothole map with Node.js, Express, MongoDB, and Leaflet",
+  "description": "Crowdsourced pothole detection map",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
-  "keywords": ["pothole", "map", "leaflet", "express", "mongodb"],
-  "author": "Your Team Name",
-  "license": "ISC",
   "dependencies": {
     "express": "^4.18.2",
-    "mongoose": "^8.3.1"
-  }
+    "mongoose": "^7.6.0",
+    "path": "^0.12.7"
+  },
+  "engines": {
+    "node": ">=18.x"
+  },
+  "author": "",
+  "license": "MIT"
 }
-

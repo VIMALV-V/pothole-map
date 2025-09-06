@@ -8,25 +8,21 @@ const app = express();
 app.use(express.json());
 app.use(express.static("public"));
 
-// ✅ Connect to MongoDB Atlas (your DB: pothole, collection: data)
-mongoose.connect(
-  "mongodb+srv://vimal:vimalmongodb@cluster0.towcoag.mongodb.net/pothole?retryWrites=true&w=majority&appName=Cluster0",
-  { useNewUrlParser: true, useUnifiedTopology: true }
-)
+// MongoDB connection (use environment variable in production)
+const mongoURI = process.env.MONGO_URI || "mongodb+srv://vimal:vimalmongodb@cluster0.towcoag.mongodb.net/pothole?retryWrites=true&w=majority";
+mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("✅ Connected to MongoDB Atlas"))
   .catch(err => console.error("❌ MongoDB connection error:", err));
 
-// ✅ Schema matches your DB documents
+// Schema
 const hazardSchema = new mongoose.Schema({
   lat: Number,
-  lon: Number,
-  count: { type: Number, default: 0 }
+  lon: Number
 });
 
-// Explicitly point to "data" collection in "pothole" DB
 const Hazard = mongoose.model("Hazard", hazardSchema, "data");
 
-// ✅ API: Get ALL potholes (no filtering)
+// API: Get all potholes
 app.get("/api/potholes", async (req, res) => {
   try {
     const hazards = await Hazard.find();
@@ -36,12 +32,48 @@ app.get("/api/potholes", async (req, res) => {
   }
 });
 
-// Serve frontend map page
+// API: Add new confirmed pothole
+app.post("/api/potholes", async (req, res) => {
+  try {
+    const { lat, lon } = req.body;
+    if (lat == null || lon == null) return res.status(400).json({ error: "lat and lon required" });
+
+    const newHazard = new Hazard({ lat, lon });
+    await newHazard.save();
+    res.json({ message: "Pothole added successfully", pothole: newHazard });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// API: Update pothole by ID
+app.put("/api/potholes/:id", async (req, res) => {
+  try {
+    const { lat, lon } = req.body;
+    const updated = await Hazard.findByIdAndUpdate(req.params.id, { lat, lon }, { new: true });
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// API: Delete pothole by ID
+app.delete("/api/potholes/:id", async (req, res) => {
+  try {
+    await Hazard.findByIdAndDelete(req.params.id);
+    res.json({ message: "Pothole deleted" });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Serve map page
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "map.html"));
 });
 
 // Start server
-app.listen(3000, () => {
-  console.log("🚀 Server running on http://localhost:3000");
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
